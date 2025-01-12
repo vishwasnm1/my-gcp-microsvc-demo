@@ -9,7 +9,7 @@ on:
         default: "./terraform"
 
 env:
-  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+  BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
 
 defaults:
   run:
