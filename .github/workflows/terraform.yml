@@ -17,11 +17,7 @@ defaults:
 
 jobs:
   terraform:
-    name: Terraform-Setup
-    permissions:
-      id-token:write
-      contents:read
-      
+    name: Terraform-Setup      
     runs-on: ubuntu-latest
 
     defaults:
