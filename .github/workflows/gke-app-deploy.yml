@@ -59,6 +59,7 @@ jobs:
 
       - name: Setup GKE Auth
         run: |
+          gcloud components install gke-gcloud-auth-plugin
           gcloud container clusters get-credentials $GKE_CLUSTER --region=${GCP_REGION}
 
       - uses: azure/setup-kubectl@v4
