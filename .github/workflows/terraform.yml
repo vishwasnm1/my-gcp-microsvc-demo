@@ -8,6 +8,13 @@ on:
         type: string
         default: "./terraform"
 
+      terraform-action:
+        required: true
+        type: choice
+        options:
+          - apply
+          - destroy
+
 env:
   BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
 
@@ -46,6 +53,14 @@ jobs:
       - name: 'Use gcloud CLI'
         run: |
           gcloud info
+
+      - name: Debug step
+        run: |
+          echo github actor: ${{ github.actor }}
+          echo github actor id: ${{ github.actor_id }}
+          echo working-directory: ${{inputs.working-directory}}
+          echo branch_name: ${{ github_ref }}
+          echo terraform action: ${{ inputs.terraform-action }}
           
       - uses: hashicorp/setup-terraform@v3
         name: Terraform setup
@@ -91,14 +106,14 @@ jobs:
         run: exit 1
   
       - name: Terraform Apply
-        if: ${{ github.ref != 'refs/heads/destroy' }}
+        if: inputs.terraform-action == 'apply'
         id: apply
         run: |
           export TF_VAR_project_id=${{ secrets.GCP_PROJECT_ID }}
           terraform apply -auto-approve -input=false
   
       - name: Terraform Destroy
-        if: ${{ always() && github.ref == 'refs/heads/destroy' }}
+        if: inputs.terraform-action == 'destroy'
         id: destroy
         run: terraform destroy -auto-approve -input=false
             
