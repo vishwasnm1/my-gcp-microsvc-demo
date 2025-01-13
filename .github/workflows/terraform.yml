@@ -61,6 +61,7 @@ jobs:
           echo working-directory: ${{inputs.working-directory}}
           echo branch_name: ${{ github.ref_name }}
           echo terraform action: ${{ inputs.terraform-action }}
+          echo gcp project id: ${{ secrets.GCP_PROJECT_ID }}
           
       - uses: hashicorp/setup-terraform@v3
         name: Terraform setup
