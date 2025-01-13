@@ -46,6 +46,4 @@ Reference from [GoogleCloudPlatform/microservices-demo](https://github.com/Googl
 
 12. Application launched from public url: http://35.193.71.177/
     ![image](https://github.com/user-attachments/assets/eca1d8a4-2cbb-4efa-b157-455a424bdfe8)
-
-
-
+    Note: Currently the Public URL is IP based, to enable DNS based url a sample domain can be purchased and GCP Cloud DNS routing has to be performed
