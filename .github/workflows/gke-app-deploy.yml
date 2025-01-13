@@ -19,7 +19,7 @@ jobs:
      contents: 'read'
      id-token: 'write'
      
-    name: Terraform-Deploy
+    name: App-Deploy-GKE
     runs-on: ubuntu-latest
           
     steps:
