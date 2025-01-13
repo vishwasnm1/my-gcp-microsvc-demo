@@ -59,7 +59,7 @@ jobs:
           echo github actor: ${{ github.actor }}
           echo github actor id: ${{ github.actor_id }}
           echo working-directory: ${{inputs.working-directory}}
-          echo branch_name: ${{ github_ref_name }}
+          echo branch_name: ${{ github.ref_name }}
           echo terraform action: ${{ inputs.terraform-action }}
           
       - uses: hashicorp/setup-terraform@v3
