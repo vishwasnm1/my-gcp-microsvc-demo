@@ -23,10 +23,9 @@ jobs:
     runs-on: ubuntu-latest
           
     steps:
-      - name: Checkout code from vishwasnm1/microservices-demo
-        run: |
-          git clone --depth 1 --branch v0 https://github.com/vishwasnm1/microservices-demo.git@main
-          cd microservices-demo/
+      - uses: actions/checkout@v4
+        with:
+          repository: 'vishwasnm1/microservices-demo'
 
       - name: Configure GCP credentials
         uses: google-github-actions/auth@v2
