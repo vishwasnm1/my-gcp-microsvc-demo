@@ -1,0 +1,105 @@
+name: "App Deploy Workflow"
+
+on:
+  workflow_dispatch:
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: ${{ secrets.GCP_REGION }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  NAMESPACE: default
+  
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform:
+    permissions:
+     contents: 'read'
+     id-token: 'write'
+     
+    name: Terraform-Deploy
+    runs-on: ubuntu-latest
+          
+    steps:
+      - name: Checkout code from vishwasnm1/microservices-demo
+        run: |
+          git clone --depth 1 --branch v0 https://github.com/vishwasnm1/microservices-demo.git
+          cd microservices-demo/
+
+      - name: Configure GCP credentials
+        uses: google-github-actions/auth@v2
+        with: 
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.WIP_NAME }}
+          
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
+      - name: 'Use gcloud CLI'
+        run: |
+          gcloud info
+
+      - name: Debug step
+        run: |
+          echo github actor: ${{ github.actor }}
+          echo github actor id: ${{ github.actor_id }}
+          echo branch_name: ${{ github.ref_name }}
+          echo gcp project id: ${{ secrets.GCP_PROJECT_ID }}
+          echo gcp region: ${{ secrets.GCP_REGION }}
+          echo gke cluster name: ${{ secrets.GKE_CLUSTER }}
+
+      - name: Enable GKE Cloud API
+        run: |
+          export PROJECT_ID=$GCP_PROJECT_ID
+          export REGION=$GCP_REGION
+          gcloud services enable container.googleapis.com --project=$GCP_PROJECT_ID
+
+      - name: Setup GKE Auth
+        run: |
+          gcloud container clusters get-credentials $GKE_CLUSTER --region=${GCP_REGION}
+
+      - uses: azure/setup-kubectl@v4
+        with:
+         version: 'latest'
+        id: install
+
+      - name: Deploy app to GKE
+        run: |
+          kubectl apply -f ./release/kubernetes-manifests.yaml
+
+      - name: Wait For Pods
+        timeout-minutes: 20
+        run: |
+          set -x
+          kubectl config set-context --current --namespace=$NAMESPACE
+          kubectl wait --for=condition=available --timeout=1000s deployment/redis-cart
+          kubectl wait --for=condition=available --timeout=1000s deployment/adservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/cartservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/checkoutservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/currencyservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/emailservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/frontend
+          kubectl wait --for=condition=available --timeout=1000s deployment/loadgenerator
+          kubectl wait --for=condition=available --timeout=1000s deployment/paymentservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/productcatalogservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/recommendationservice
+          kubectl wait --for=condition=available --timeout=1000s deployment/shippingservice
+
+      - name: Query EXTERNAL_IP
+        timeout-minutes: 5
+        run: |
+          set -x
+          get_externalIP() {
+            kubectl get service frontend-external --namespace $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          }
+          until [[ -n "$(get_externalIP)" ]]; do
+            echo "Querying for external IP for frontend-external on namespace: $NAMESPACE{}"
+          sleep 3
+          done
+          EXTERNAL_IP=$(get_externalIP)
+          echo "::set-env name=EXTERNAL_IP::$EXTERNAL_IP"
+            
