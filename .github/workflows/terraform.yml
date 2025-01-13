@@ -37,7 +37,10 @@ jobs:
         with: 
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.WIP_NAME }}
-
+          
+      - uses: hashicorp/setup-terraform@v3
+        name: Terraform setup
+        
       - uses: actions/cache@v4
         name: Cache plugin dir
         with:
@@ -54,7 +57,7 @@ jobs:
   
       - name: Run TFLint
         run: tflint -f compact
-
+        
       - name: Terraform init
         id: init
         run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
