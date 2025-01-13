@@ -63,6 +63,7 @@ jobs:
           gcloud container clusters get-credentials $GKE_CLUSTER --region=${GCP_REGION}
 
       - uses: azure/setup-kubectl@v4
+        name: Setup kubetcl
         with:
          version: 'latest'
         id: install
@@ -100,6 +101,6 @@ jobs:
             echo "Querying for external IP for frontend-external on namespace: $NAMESPACE{}"
           sleep 3
           done
-          EXTERNAL_IP=$(get_externalIP)
-          echo "::set-env name=EXTERNAL_IP::$EXTERNAL_IP"
-            
+          echo "EXTERNAL_IP=$(get_externalIP)" >> GITHUB_OUTPUT
+          echo external ip: "$EXTERNAL_IP"
+  
