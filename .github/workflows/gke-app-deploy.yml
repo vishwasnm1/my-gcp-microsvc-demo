@@ -102,5 +102,4 @@ jobs:
           sleep 3
           done
           echo "EXTERNAL_IP=$(get_externalIP)" >> GITHUB_OUTPUT
-          echo external ip: "$EXTERNAL_IP"
   
