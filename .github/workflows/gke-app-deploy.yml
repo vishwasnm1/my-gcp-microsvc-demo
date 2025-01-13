@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Checkout code from vishwasnm1/microservices-demo
         run: |
-          git clone --depth 1 --branch v0 https://github.com/vishwasnm1/microservices-demo.git
+          git clone --depth 1 --branch v0 https://github.com/vishwasnm1/microservices-demo.git@main
           cd microservices-demo/
 
       - name: Configure GCP credentials
