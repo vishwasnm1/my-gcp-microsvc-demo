@@ -21,7 +21,7 @@ jobs:
      contents: 'read'
      id-token: 'write'
      
-    name: Terraform-Setup      
+    name: Terraform-Deploy
     runs-on: ubuntu-latest
 
     defaults:
@@ -37,6 +37,16 @@ jobs:
         with: 
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
           workload_identity_provider: ${{ secrets.WIP_NAME }}
+          
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
+      - name: 'Use gcloud CLI'
+        run: |
+          gcloud info
+          gcloud auth application-default login
           
       - uses: hashicorp/setup-terraform@v3
         name: Terraform setup
