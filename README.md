@@ -27,7 +27,7 @@ Reference from [GoogleCloudPlatform/microservices-demo](https://github.com/Googl
 5. Configure GitHub secrets to secure the parameters that are to be passed in the workflow run-time.
    - GCP_PROJECT_ID - GCP Project id
    - SERVICE_ACCOUNT - service account details
-   - WIP_NAME - Workload identity federation pool deatils
+   - WIP_NAME - Workload identity federation pool details
    - BUCKET_TF_STATE - Cloud Storage Bucket to store terraform backend state files
    ![image](https://github.com/user-attachments/assets/a93852c1-645e-493c-b5f4-d8f27e1af42d)
 
