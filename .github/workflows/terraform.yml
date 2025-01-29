@@ -116,5 +116,7 @@ jobs:
       - name: Terraform Destroy
         if: inputs.terraform-action == 'destroy'
         id: destroy
-        run: terraform destroy -auto-approve -input=false
-            
+        run: |
+          export TF_VAR_project_id=${{ secrets.GCP_PROJECT_ID }}
+          terraform destroy -auto-approve -input=false
+          
